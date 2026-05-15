@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Scout Hub — Plataforma de Scouting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+<style>
+/* ── RESET & BASE ─────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #0b0f0d;
+  color: #e8ede9;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── CSS VARS ─────────────────────────────────────────── */
+:root {
+  --green:      #1fcc74;
+  --green-dim:  #0f6e40;
+  --green-glow: rgba(31,204,116,.18);
+  --surface:    #121a15;
+  --surface2:   #182120;
+  --surface3:   #1e2d25;
+  --border:     rgba(31,204,116,.12);
+  --border2:    rgba(31,204,116,.22);
+  --text:       #e8ede9;
+  --muted:      #6b7d70;
+  --danger:     #e05252;
+  --blue:       #4fa3e0;
+  --amber:      #e0a840;
+  --purple:     #9b7de0;
+
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+}
+
+/* ── SCROLLBAR ────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0b0f0d; }
+::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 99px; }
+
+/* ── INPUTS & SELECTS ────────────────────────────────── */
+input[type=text], input[type=date], select, textarea {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text);
+  padding: 9px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s;
+  width: 100%;
+}
+input[type=text]:focus, input[type=date]:focus, select:focus, textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px var(--green-glow);
+}
+select option { background: #121a15; }
+input[type=range] {
+  accent-color: var(--green);
+  cursor: pointer;
+  flex: 1;
+}
+
+/* ── LAYOUT ───────────────────────────────────────────── */
+.wrapper { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ── TOPBAR ───────────────────────────────────────────── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(11,15,13,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+.topbar-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 62px; gap: 16px;
+}
+.logo {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none;
+}
+.logo-mark {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--green), var(--green-dim));
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; color: #0b0f0d;
+  box-shadow: 0 0 20px var(--green-glow);
+  flex-shrink: 0;
+}
+.logo-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px; letter-spacing: .08em;
+  color: var(--text); line-height: 1;
+}
+.logo-tagline {
+  font-size: 10px; color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: .12em; text-transform: uppercase;
+  margin-top: 2px;
+}
+.btn-primary {
+  background: var(--green);
+  color: #0b0f0d;
+  border: none; border-radius: var(--r-sm);
+  padding: 9px 20px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 7px;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  white-space: nowrap;
+}
+.btn-primary:hover {
+  background: #2fdc84;
+  box-shadow: 0 0 18px var(--green-glow);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: translateY(0); }
+
+/* ── PITCH HERO BANNER ───────────────────────────────── */
+.hero {
+  background: linear-gradient(180deg, rgba(31,204,116,.06) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 28px 24px 0;
+  overflow: hidden;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(31,204,116,.04) 0px, rgba(31,204,116,.04) 1px, transparent 1px, transparent 80px),
+    repeating-linear-gradient(0deg,  rgba(31,204,116,.04) 0px, rgba(31,204,116,.04) 1px, transparent 1px, transparent 80px);
+  pointer-events: none;
+}
+.hero-inner { max-width: 1100px; margin: 0 auto; }
+
+/* ── STAT CARDS ──────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s, transform .2s;
+}
+.stat-card::before {
+  content: '';
+  position: absolute; bottom: 0; left: 0;
+  width: 100%; height: 2px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s ease;
+}
+.stat-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.stat-card:hover::before { transform: scaleX(1); }
+.stat-icon {
+  width: 32px; height: 32px;
+  background: var(--green-glow);
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green); font-size: 17px;
+  margin-bottom: 10px;
+}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; line-height: 1;
+  color: var(--text); margin-bottom: 2px;
+}
+.stat-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: .04em; }
+
+/* ── NAV TABS ────────────────────────────────────────── */
+.nav-wrap {
+  background: rgba(11,15,13,.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 62px; z-index: 40;
+  padding: 0 24px;
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; gap: 2px;
+}
+.nav-tab {
+  padding: 14px 18px;
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; background: none;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  display: flex; align-items: center; gap: 7px;
+  transition: color .2s, border-color .2s;
+  white-space: nowrap;
+  font-family: 'DM Sans', sans-serif;
+}
+.nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+.nav-tab:hover:not(.active) { color: var(--text); }
+.nav-tab .tab-badge {
+  background: var(--green-glow);
+  color: var(--green);
+  font-size: 10px; font-weight: 600;
+  padding: 1px 6px; border-radius: 99px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── MAIN CONTENT ────────────────────────────────────── */
+.main { padding: 28px 24px; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── TOOLBAR ─────────────────────────────────────────── */
+.toolbar {
+  display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;
+}
+.toolbar input[type=text] { flex: 1; min-width: 180px; }
+.toolbar select { min-width: 150px; }
+
+/* ── SECTION LABEL ───────────────────────────────────── */
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--green); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── ENTRY CARDS ─────────────────────────────────────── */
+.entries { display: flex; flex-direction: column; gap: 10px; }
+
+.entry-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, transform .2s;
+  animation: fadeUp .3s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.entry-card:hover { border-color: var(--border2); background: var(--surface2); transform: translateY(-1px); }
+.card-top { display: flex; align-items: flex-start; gap: 14px; }
+.entry-icon {
+  width: 42px; height: 42px;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.icon-report  { background: rgba(79,163,224,.12); color: var(--blue); }
+.icon-video   { background: rgba(224,168,64,.12);  color: var(--amber); }
+.icon-resource{ background: rgba(31,204,116,.12); color: var(--green); }
+.icon-note    { background: rgba(155,125,224,.12); color: var(--purple); }
+
+.card-body { flex: 1; min-width: 0; }
+.card-title {
+  font-size: 15px; font-weight: 600;
+  color: var(--text); margin-bottom: 6px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.card-meta {
+  font-size: 12px; color: var(--muted);
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.badge {
+  font-size: 11px; padding: 2px 9px; border-radius: 99px;
+  font-weight: 500; font-family: 'JetBrains Mono', monospace;
+}
+.badge-report   { background: rgba(79,163,224,.15);  color: var(--blue); }
+.badge-video    { background: rgba(224,168,64,.15);   color: var(--amber); }
+.badge-resource { background: rgba(31,204,116,.15);   color: var(--green); }
+.badge-note     { background: rgba(155,125,224,.15);  color: var(--purple); }
+.pos-badge {
+  background: var(--surface3); color: var(--muted);
+  font-size: 11px; padding: 2px 8px; border-radius: 99px;
+  font-family: 'JetBrains Mono', monospace; font-weight: 500;
+}
+.score-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; padding: 2px 9px; border-radius: 99px; font-weight: 600;
+}
+
+.card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-icon {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  width: 32px; height: 32px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 16px;
+  transition: border-color .2s, color .2s, background .2s;
+}
+.btn-icon:hover { border-color: var(--border2); color: var(--text); background: var(--surface3); }
+.btn-icon.danger:hover { border-color: var(--danger); color: var(--danger); }
+
+/* ── RATING BARS INLINE ──────────────────────────────── */
+.ratings-inline {
+  display: grid; grid-template-columns: repeat(6,1fr); gap: 8px;
+  margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.rating-item { display: flex; flex-direction: column; gap: 4px; }
+.rating-name { font-size: 10px; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .08em; }
+.rating-bar-bg { height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+.rating-bar-fill { height: 100%; border-radius: 2px; background: var(--green); transition: width .5s ease; }
+.rating-val { font-size: 11px; font-weight: 600; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+
+/* ── CARD DETAIL (expanded) ──────────────────────────── */
+.card-detail {
+  display: none; margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+  animation: fadeIn .2s ease;
+}
+.card-detail.open { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.detail-field { font-size: 13px; color: var(--muted); }
+.detail-field strong { color: var(--text); font-weight: 500; }
+.detail-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 10px; }
+.link-preview {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--green);
+  text-decoration: none; font-family: 'JetBrains Mono', monospace;
+  background: var(--green-glow); padding: 4px 10px; border-radius: var(--r-sm);
+  transition: background .2s;
+}
+.link-preview:hover { background: rgba(31,204,116,.28); }
+.tags-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.tag {
+  font-size: 11px; padding: 3px 10px; border-radius: 99px;
+  background: var(--surface3); color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.author-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 4px; vertical-align: 1px; }
+
+/* ── EMPTY STATE ─────────────────────────────────────── */
+.empty {
+  text-align: center; padding: 4rem 1rem;
+  color: var(--muted); font-size: 14px;
+}
+.empty-icon {
+  font-size: 48px; color: var(--surface3); display: block; margin-bottom: 14px;
+}
+.empty h3 { color: var(--muted); font-size: 15px; margin-bottom: 6px; }
+
+/* ── COMPARE VIEW ────────────────────────────────────── */
+.compare-pick { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 24px; }
+.pick-slot {
+  border: 1px dashed var(--border2);
+  border-radius: var(--r-lg); padding: 18px;
+  min-height: 100px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; transition: border-color .2s, background .2s;
+  position: relative;
+}
+.pick-slot:hover { border-color: var(--green); background: var(--green-glow); }
+.pick-slot.filled { border-style: solid; border-color: var(--border); cursor: default; align-items: flex-start; justify-content: flex-start; }
+.pick-slot-remove {
+  position: absolute; top: 10px; right: 10px;
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--r-sm); width: 26px; height: 26px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 13px; transition: border-color .2s, color .2s;
+}
+.pick-slot-remove:hover { border-color: var(--danger); color: var(--danger); }
+.pick-slot-label { font-size: 11px; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: .1em; }
+.pick-slot-name { font-size: 15px; font-weight: 600; color: var(--text); }
+.pick-slot-sub { font-size: 12px; color: var(--muted); }
+.pick-color { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+
+.radar-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl); padding: 24px; margin-bottom: 16px;
+}
+.radar-legend { display: flex; gap: 20px; justify-content: center; margin-bottom: 16px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); font-weight: 500; }
+
+.compare-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl); overflow: hidden;
+}
+.compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.compare-table th {
+  padding: 12px 16px; text-align: left; font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--muted);
+  background: var(--surface2);
+}
+.compare-table td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--text); }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table tr:hover td { background: var(--surface2); }
+.row-label { color: var(--muted) !important; font-size: 12px !important; }
+.bar-cell { display: flex; align-items: center; gap: 8px; }
+.bar-mini { flex: 1; height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; min-width: 60px; }
+.bar-mini-fill { height: 100%; border-radius: 3px; }
+.best { font-weight: 700 !important; }
+
+/* ── LIBRARY ─────────────────────────────────────────── */
+.lib-search-bar { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+.lib-search-bar input { flex: 1; min-width: 200px; }
+.lib-section { margin-bottom: 32px; }
+.lib-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.lib-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 600; color: var(--text);
+}
+.lib-count {
+  font-size: 11px; color: var(--green);
+  background: var(--green-glow);
+  padding: 2px 9px; border-radius: 99px;
+  font-family: 'JetBrains Mono', monospace; font-weight: 600;
+}
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 12px; }
+.lib-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: border-color .2s, transform .2s, box-shadow .2s;
+  cursor: pointer;
+}
+.lib-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+}
+.lib-card-head { display: flex; align-items: center; gap: 10px; }
+.lib-card-icon {
+  width: 36px; height: 36px; border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0;
+}
+.lib-card-name { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.lib-card-desc { font-size: 12px; color: var(--muted); line-height: 1.6; flex: 1; }
+.lib-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+.lib-card-cat { font-size: 10px; padding: 2px 8px; border-radius: 99px; font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+.lib-card-actions { display: flex; gap: 4px; }
+.btn-xs {
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--r-sm); width: 28px; height: 28px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 13px; transition: border-color .2s, color .2s;
+}
+.btn-xs:hover { border-color: var(--border2); color: var(--text); }
+.btn-xs.danger:hover { border-color: var(--danger); color: var(--danger); }
+/* cat colors */
+.cat-plataforma { background: rgba(79,163,224,.12); color: var(--blue); }
+.cat-dados      { background: rgba(31,204,116,.12);  color: var(--green); }
+.cat-tatica     { background: rgba(224,168,64,.12);   color: var(--amber); }
+.cat-videoanal  { background: rgba(224,82,82,.12);    color: #e07a52; }
+.cat-formacao   { background: rgba(155,125,224,.12);  color: var(--purple); }
+.cat-outro      { background: var(--surface3);         color: var(--muted); }
+.icon-plataforma{ background: rgba(79,163,224,.12);  color: var(--blue); }
+.icon-dados     { background: rgba(31,204,116,.12);   color: var(--green); }
+.icon-tatica    { background: rgba(224,168,64,.12);   color: var(--amber); }
+.icon-videoanal { background: rgba(224,82,82,.12);    color: #e07a52; }
+.icon-formacao  { background: rgba(155,125,224,.12);  color: var(--purple); }
+.icon-outro     { background: var(--surface3);         color: var(--muted); }
+
+/* ── MODAL ───────────────────────────────────────────── */
+.modal-wrap {
+  display: none; position: fixed; inset: 0;
+  background: rgba(7,11,9,.8); backdrop-filter: blur(8px);
+  z-index: 200;
+  align-items: flex-start; justify-content: center;
+  padding: 40px 16px; overflow-y: auto;
+}
+.modal-wrap.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--r-xl);
+  padding: 28px 28px 24px;
+  width: 100%; max-width: 540px;
+  box-shadow: 0 32px 64px rgba(0,0,0,.6);
+  animation: slideUp .25s ease;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: .06em; color: var(--text);
+}
+.modal-close {
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--r-sm); width: 32px; height: 32px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-size: 16px; transition: border-color .2s, color .2s;
+}
+.modal-close:hover { border-color: var(--danger); color: var(--danger); }
+.form-section {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--green); margin: 20px 0 12px;
+  padding-top: 20px; border-top: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px;
+}
+.form-section:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-group { margin-bottom: 12px; }
+.form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; font-weight: 500; letter-spacing: .03em; }
+.form-group textarea {
+  resize: vertical; min-height: 80px;
+  padding: 10px 12px; line-height: 1.6;
+}
+.rating-row { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-bottom: 12px; }
+.rating-group { display: flex; flex-direction: column; gap: 6px; }
+.rating-group label { font-size: 12px; color: var(--muted); }
+.slider-row { display: flex; align-items: center; gap: 10px; }
+.slider-val { font-size: 15px; font-weight: 700; min-width: 20px; color: var(--green); font-family: 'JetBrains Mono', monospace; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); }
+.btn-secondary {
+  background: none; border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 10px 20px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; color: var(--muted); transition: border-color .2s, color .2s;
+}
+.btn-secondary:hover { border-color: var(--border2); color: var(--text); }
+.report-only { display: none; }
+
+/* ── PICKER MODAL ────────────────────────────────────── */
+.picker-list { display: flex; flex-direction: column; gap: 8px; max-height: 360px; overflow-y: auto; }
+.picker-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  cursor: pointer; transition: border-color .2s, background .2s;
+}
+.picker-item:hover { border-color: var(--green); background: var(--green-glow); }
+.picker-name { font-size: 14px; font-weight: 600; color: var(--text); }
+.picker-sub { font-size: 12px; color: var(--muted); }
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 700px) {
+  .stats-row { grid-template-columns: repeat(2,1fr); }
+  .compare-pick { grid-template-columns: 1fr; }
+  .form-row, .rating-row { grid-template-columns: 1fr; }
+  .ratings-inline { grid-template-columns: repeat(3,1fr); }
+  .lib-grid { grid-template-columns: 1fr; }
+  .nav-tab { padding: 12px 10px; font-size: 12px; }
+}
+
+/* ── FIREBASE BANNER ─────────────────────────────────── */
+.fb-banner {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+  background: linear-gradient(90deg, #1a2920, #0f1f18);
+  border-top: 1px solid rgba(31,204,116,.3);
+  padding: 14px 24px;
+  align-items: center; gap: 16px; flex-wrap: wrap;
+  font-size: 13px;
+}
+.fb-banner-icon { color: var(--green); font-size: 22px; flex-shrink: 0; }
+.fb-banner-text { flex: 1; color: var(--muted); line-height: 1.6; }
+.fb-banner-text strong { color: var(--text); }
+.fb-banner-text code {
+  background: var(--surface3); color: var(--green);
+  padding: 1px 6px; border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace; font-size: 12px;
+}
+.fb-banner a { color: var(--green); }
+.fb-banner-steps { display: flex; gap: 8px; flex-wrap: wrap; }
+.fb-step {
+  background: var(--surface3); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 8px 14px;
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+}
+.fb-step strong { color: var(--text); display: block; margin-bottom: 2px; }
+
+</style>
+</head>
+<body>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="logo" href="#">
+      <div class="logo-mark"><i class="ti ti-radar"></i></div>
+      <div>
+        <div class="logo-name">Scout Hub</div>
+        <div class="logo-tagline">Plataforma colaborativa</div>
+      </div>
+    </a>
+    <button class="btn-primary" id="main-add-btn" onclick="handleAdd()">
+      <i class="ti ti-plus"></i> <span id="add-label">Adicionar</span>
+    </button>
+  </div>
+</header>
+
+<!-- ── HERO / STATS ── -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-file-text"></i></div>
+        <div class="stat-num" id="cnt-report">0</div>
+        <div class="stat-label">Relatórios</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-video"></i></div>
+        <div class="stat-num" id="cnt-video">0</div>
+        <div class="stat-label">Vídeos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-books"></i></div>
+        <div class="stat-num" id="cnt-lib">0</div>
+        <div class="stat-label">Recursos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-star"></i></div>
+        <div class="stat-num" id="cnt-avg">—</div>
+        <div class="stat-label">Nota média</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── NAV TABS ── -->
+<nav class="nav-wrap" aria-label="Navegação principal">
+  <div class="nav-inner">
+    <button class="nav-tab active" onclick="switchView('hub',this)"><i class="ti ti-layout-grid"></i> Hub</button>
+    <button class="nav-tab" onclick="switchView('reports',this)"><i class="ti ti-file-text"></i> Relatórios <span class="tab-badge" id="tab-cnt-report">0</span></button>
+    <button class="nav-tab" onclick="switchView('videos',this)"><i class="ti ti-video"></i> Vídeos</button>
+    <button class="nav-tab" onclick="switchView('compare',this)"><i class="ti ti-columns"></i> Comparar</button>
+    <button class="nav-tab" onclick="switchView('library',this)"><i class="ti ti-books"></i> Biblioteca</button>
+  </div>
+</nav>
+
+<!-- ── MAIN ── -->
+<main class="main wrapper">
+
+  <!-- HUB -->
+  <div class="view active" id="view-hub">
+    <div class="section-label"><i class="ti ti-layout-grid"></i> Todas as entradas</div>
+    <div class="toolbar">
+      <input type="text" id="search-hub" placeholder="Pesquisar jogador, clube, posição..."/>
+      <select id="pos-hub" onchange="renderList('hub')">
+        <option value="">Todas as posições</option>
+        <option>GR</option><option>DC</option><option>LD</option><option>LE</option>
+        <option>MDC</option><option>MC</option><option>MOC</option><option>ED</option><option>EE</option><option>PL</option>
+      </select>
+      <select id="author-hub" onchange="renderList('hub')"><option value="">Todos os autores</option></select>
+    </div>
+    <div class="entries" id="list-hub"></div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="view" id="view-reports">
+    <div class="section-label"><i class="ti ti-file-text"></i> Fichas de scouting</div>
+    <div class="toolbar">
+      <input type="text" id="search-reports" placeholder="Pesquisar jogador, clube..."/>
+      <select id="pos-reports" onchange="renderList('reports')">
+        <option value="">Todas as posições</option>
+        <option>GR</option><option>DC</option><option>LD</option><option>LE</option>
+        <option>MDC</option><option>MC</option><option>MOC</option><option>ED</option><option>EE</option><option>PL</option>
+      </select>
+      <select id="author-reports" onchange="renderList('reports')"><option value="">Todos os autores</option></select>
+    </div>
+    <div class="entries" id="list-reports"></div>
+  </div>
+
+  <!-- VIDEOS -->
+  <div class="view" id="view-videos">
+    <div class="section-label"><i class="ti ti-video"></i> Vídeos partilhados</div>
+    <div class="toolbar"><input type="text" id="search-videos" placeholder="Pesquisar vídeos..."/></div>
+    <div class="entries" id="list-videos"></div>
+  </div>
+
+  <!-- COMPARE -->
+  <div class="view" id="view-compare">
+    <div class="section-label"><i class="ti ti-columns"></i> Comparação de jogadores</div>
+    <div class="compare-pick" id="compare-slots"></div>
+    <div id="compare-output"></div>
+  </div>
+
+  <!-- LIBRARY -->
+  <div class="view" id="view-library">
+    <div class="section-label"><i class="ti ti-books"></i> Biblioteca de recursos</div>
+    <div class="lib-search-bar">
+      <input type="text" id="search-lib" placeholder="Pesquisar na biblioteca..."/>
+      <select id="cat-lib" onchange="renderLibrary()">
+        <option value="">Todas as categorias</option>
+        <option value="plataforma">Plataformas de scouting</option>
+        <option value="dados">Dados e estatísticas</option>
+        <option value="tatica">Análise tática</option>
+        <option value="videoanal">Vídeo e análise</option>
+        <option value="formacao">Formação e educação</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+    <div id="library-content"></div>
+  </div>
+
+</main>
+
+<!-- ── ENTRY MODAL ── -->
+<div class="modal-wrap" id="modal-wrap" onclick="handleOvClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Nova entrada</div>
+      <button class="modal-close" onclick="closeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-section">Tipo de entrada</div>
+    <div class="form-group"><select id="f-type" onchange="onTypeChange()">
+      <option value="report">📋 Relatório / ficha de scouting</option>
+      <option value="video">🎬 Vídeo</option>
+      <option value="resource">🔗 Recurso / link</option>
+      <option value="note">📝 Nota / análise tática</option>
+    </select></div>
+
+    <div class="form-section report-only" id="sec-player">Dados do jogador</div>
+    <div class="form-row report-only" id="row-player">
+      <div class="form-group" style="margin:0"><label>Nome do jogador</label><input type="text" id="f-player" placeholder="Ex: João Silva"/></div>
+      <div class="form-group" style="margin:0"><label>Posição</label>
+        <select id="f-pos"><option value="">— Selecionar —</option><option>GR</option><option>DC</option><option>LD</option><option>LE</option><option>MDC</option><option>MC</option><option>MOC</option><option>ED</option><option>EE</option><option>PL</option></select>
+      </div>
+    </div>
+    <div class="form-row report-only" id="row-club">
+      <div class="form-group" style="margin:0"><label>Clube</label><input type="text" id="f-club" placeholder="Ex: Sporting CP"/></div>
+      <div class="form-group" style="margin:0"><label>Escalão / Liga</label><input type="text" id="f-league" placeholder="Ex: Sub-23 / Liga Portugal"/></div>
+    </div>
+    <div class="form-row report-only" id="row-match">
+      <div class="form-group" style="margin:0"><label>Data de observação</label><input type="date" id="f-date"/></div>
+      <div class="form-group" style="margin:0"><label>Jogo / contexto</label><input type="text" id="f-match" placeholder="Ex: Sporting vs Porto"/></div>
+    </div>
+
+    <div class="form-section">Detalhes</div>
+    <div class="form-group"><label>Título</label><input type="text" id="f-title" placeholder="Título ou descrição breve"/></div>
+    <div class="form-group"><label>Link (URL)</label><input type="text" id="f-url" placeholder="https://..."/></div>
+    <div class="form-group"><label>Notas / observações</label><textarea id="f-desc" placeholder="Pontos fortes, pontos a melhorar, contexto..."></textarea></div>
+
+    <div class="report-only" id="ratings-section">
+      <div class="form-section">Avaliação (1–10)</div>
+      <div class="rating-row">
+        <div class="rating-group"><label>Técnica</label><div class="slider-row"><input type="range" min="1" max="10" value="5" id="r-tec" oninput="document.getElementById('rv-tec').textContent=this.value"/><span class="slider-val" id="rv-tec">5</span></div></div>
+        <div class="rating-group"><label>Tática</label><div class="slider-row"><input type="range" min="1" max="10" value="5" id="r-tat" oninput="document.getElementById('rv-tat').textContent=this.value"/><span class="slider-val" id="rv-tat">5</span></div></div>
+        <div class="rating-group"><label>Física</label><div class="slider-row"><input type="range" min="1" max="10" value="5" id="r-fis" oninput="document.getElementById('rv-fis').textContent=this.value"/><span class="slider-val" id="rv-fis">5</span></div></div>
+        <div class="rating-group"><label>Mental</label><div class="slider-row"><input type="range" min="1" max="10" value="5" id="r-men" oninput="document.getElementById('rv-men').textContent=this.value"/><span class="slider-val" id="rv-men">5</span></div></div>
+        <div class="rating-group"><label>Velocidade</label><div class="slider-row"><input type="range" min="1" max="10" value="5" id="r-vel" oninput="document.getElementById('rv-vel').textContent=this.value"/><span class="slider-val" id="rv-vel">5</span></div></div>
+        <div class="rating-group"><label>Potencial</label><div class="slider-row"><input type="range" min="1" max="10" value="5" id="r-pot" oninput="document.getElementById('rv-pot').textContent=this.value"/><span class="slider-val" id="rv-pot">5</span></div></div>
+      </div>
+    </div>
+
+    <div class="form-section">Autor e tags</div>
+    <div class="form-row">
+      <div class="form-group" style="margin:0"><label>Autor</label><input type="text" id="f-author" placeholder="O teu nome"/></div>
+      <div class="form-group" style="margin:0"><label>Tags (vírgula)</label><input type="text" id="f-tags" placeholder="Ex: canhoto, rápido, sub20"/></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveEntry()"><i class="ti ti-check"></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── LIBRARY MODAL ── -->
+<div class="modal-wrap" id="lib-modal-wrap" onclick="handleLibOvClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="lib-modal-title">Novo recurso</div>
+      <button class="modal-close" onclick="closeLibModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="form-group"><label>Nome do recurso</label><input type="text" id="lf-name" placeholder="Ex: Wyscout, Transfermarkt..."/></div>
+    <div class="form-group"><label>Categoria</label>
+      <select id="lf-cat">
+        <option value="plataforma">Plataforma de scouting</option>
+        <option value="dados">Dados e estatísticas</option>
+        <option value="tatica">Análise tática</option>
+        <option value="videoanal">Vídeo e análise</option>
+        <option value="formacao">Formação e educação</option>
+        <option value="outro">Outro</option>
+      </select>
+    </div>
+    <div class="form-group"><label>URL</label><input type="text" id="lf-url" placeholder="https://..."/></div>
+    <div class="form-group"><label>Descrição</label><textarea id="lf-desc" placeholder="Para que serve, como usar, dicas..."></textarea></div>
+    <div class="form-group"><label>Adicionado por</label><input type="text" id="lf-author" placeholder="O teu nome"/></div>
+    <div class="form-group"><label>Tags</label><input type="text" id="lf-tags" placeholder="Ex: gratuito, premium, UEFA"/></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeLibModal()">Cancelar</button>
+      <button class="btn-primary" onclick="saveResource()"><i class="ti ti-check"></i> Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── PICKER MODAL ── -->
+<div class="modal-wrap" id="picker-wrap" onclick="handlePickerOvClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Escolher jogador</div>
+      <button class="modal-close" onclick="closePicker()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="picker-list" id="picker-list"></div>
+    <div class="modal-actions"><button class="btn-secondary" onclick="closePicker()">Cancelar</button></div>
+  </div>
+</div>
+
+
+<!-- ── FIREBASE SETUP BANNER ── -->
+<div class="fb-banner" id="fb-banner">
+  <i class="ti ti-brand-firebase fb-banner-icon"></i>
+  <div class="fb-banner-text">
+    <strong>Configuração Firebase necessária</strong> — para partilha online, segue os 3 passos abaixo e cola as credenciais no ficheiro (linha ~812).
+  </div>
+  <div class="fb-banner-steps">
+    <div class="fb-step"><strong>1. Cria projeto</strong><a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a><br>→ "Add project" → desativa Analytics</div>
+    <div class="fb-step"><strong>2. Realtime Database</strong>Build → Realtime Database<br>→ Create → "Start in test mode"</div>
+    <div class="fb-step"><strong>3. Copia credenciais</strong>Project Settings → "Your apps"<br>→ Web app (&lt;/&gt;) → copia firebaseConfig</div>
+  </div>
+</div>
+
+<script type="module">
+// ── FIREBASE SETUP ────────────────────────────────────
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+// ╔══════════════════════════════════════════════════════╗
+// ║  PASSO 1: Cola aqui as tuas credenciais do Firebase  ║
+// ╚══════════════════════════════════════════════════════╝
+const firebaseConfig = {
+  apiKey:            "AIzaSyAAKapVjAcxwS9oRHv9qEJUFkrLTTGdju8",
+  authDomain:        "scout-hub-tfc.firebaseapp.com",
+  databaseURL:       "https://scout-hub-tfc-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "scout-hub-tfc",
+  storageBucket:     "scout-hub-tfc.firebasestorage.app",
+  messagingSenderId: "930950702437",
+  appId:             "1:930950702437:web:4d233906ce54688332ed8c"
+};
+
+const CONFIGURED = firebaseConfig.apiKey !== "COLE_AQUI";
+let db, entriesRef, resourcesRef;
+
+if (CONFIGURED) {
+  const app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+  entriesRef   = ref(db, 'entries');
+  resourcesRef = ref(db, 'resources');
+  // Escuta mudanças em tempo real
+  onValue(entriesRef, snap => {
+    entries = snap.val() ? Object.values(snap.val()) : [];
+    renderAll();
+  });
+  onValue(resourcesRef, snap => {
+    resources = snap.val() ? Object.values(snap.val()) : PRESETS;
+    renderAll();
+  });
+  document.getElementById('fb-banner').style.display = 'none';
+} else {
+  document.getElementById('fb-banner').style.display = 'flex';
+}
+
+// ── DATA ──────────────────────────────────────────────
+let entries=[], resources=[];
+let currentView='hub', editingId=null, openCardId=null;
+let compareIds=[null,null,null], pickerSlot=null, editingLibId=null;
+
+const PCOLS=['#1fcc74','#4fa3e0','#e0a840'];
+const aCols=['#1fcc74','#4fa3e0','#e0a840','#e05252','#9b7de0','#e07a52'];
+const aMap={};let aIdx=0;
+function aColor(n){if(!n)return'#6b7d70';if(!aMap[n]){aMap[n]=aCols[aIdx%aCols.length];aIdx++;}return aMap[n];}
+
+const typeCfg={
+  report:{icon:'ti-file-text',label:'Relatório',cls:'icon-report',badgeCls:'badge-report'},
+  video: {icon:'ti-video',     label:'Vídeo',    cls:'icon-video', badgeCls:'badge-video'},
+  resource:{icon:'ti-link',   label:'Recurso',  cls:'icon-resource',badgeCls:'badge-resource'},
+  note:  {icon:'ti-notes',    label:'Nota',     cls:'icon-note',  badgeCls:'badge-note'}
+};
+const rKeys=['tec','tat','fis','men','vel','pot'];
+const rLabels={tec:'Técnica',tat:'Tática',fis:'Física',men:'Mental',vel:'Velocidade',pot:'Potencial'};
+const catCfg={
+  plataforma:{label:'Plataformas de scouting',icon:'ti-radar',        iconCls:'icon-plataforma',badgeCls:'cat-plataforma'},
+  dados:     {label:'Dados e estatísticas',   icon:'ti-chart-bar',    iconCls:'icon-dados',     badgeCls:'cat-dados'},
+  tatica:    {label:'Análise tática',         icon:'ti-direction-arrows',iconCls:'icon-tatica', badgeCls:'cat-tatica'},
+  videoanal: {label:'Vídeo e análise',        icon:'ti-video',         iconCls:'icon-videoanal', badgeCls:'cat-videoanal'},
+  formacao:  {label:'Formação e educação',    icon:'ti-school',        iconCls:'icon-formacao',  badgeCls:'cat-formacao'},
+  outro:     {label:'Outro',                  icon:'ti-bookmark',      iconCls:'icon-outro',     badgeCls:'cat-outro'}
+};
+const PRESETS=[
+  {id:'p1',name:'Wyscout',       cat:'plataforma',url:'https://wyscout.com',desc:'Plataforma profissional de análise e scouting. Vídeos, estatísticas e relatórios avançados.',author:'',tags:'premium,vídeo,dados'},
+  {id:'p2',name:'InStat Scout',  cat:'plataforma',url:'https://football.instatscout.com',desc:'Scouting com base de dados global e análise de desempenho detalhada.',author:'',tags:'premium,scout'},
+  {id:'p3',name:'Transfermarkt', cat:'dados',      url:'https://www.transfermarkt.pt',desc:'Transferências, valores de mercado e histórico de jogadores. Gratuito.',author:'',tags:'gratuito,transferências'},
+  {id:'p4',name:'FBref',         cat:'dados',      url:'https://fbref.com',desc:'Estatísticas avançadas de jogadores e equipas. Dados StatsBomb. Gratuito.',author:'',tags:'gratuito,estatísticas'},
+  {id:'p5',name:'Sofascore',     cat:'dados',      url:'https://www.sofascore.com',desc:'Ratings por jogo, heatmaps e estatísticas detalhadas. Gratuito.',author:'',tags:'gratuito,heatmap'},
+  {id:'p6',name:'Tactical Pad',  cat:'tatica',     url:'https://www.tacticalpad.com',desc:'Criação de pranchas táticas e análise de sistemas de jogo.',author:'',tags:'tática,pranchas'},
+  {id:'p7',name:'Hudl Sportscode',cat:'videoanal', url:'https://www.hudl.com',desc:'Software profissional de análise de vídeo usado em clubes de elite.',author:'',tags:'premium,vídeo'},
+  {id:'p8',name:'UEFA Learning',  cat:'formacao',  url:'https://learning.uefa.com',desc:'Plataforma oficial UEFA. Cursos de scouting, análise e coaching.',author:'',tags:'gratuito,UEFA,cursos'},
+  {id:'p9',name:"The Coaches' Voice",cat:'tatica', url:'https://www.thecoachesvoice.com',desc:'Análises táticas por treinadores de topo. Conteúdo de alta qualidade.',author:'',tags:'tática,análise'},
+  {id:'p10',name:'Statsbomb Open Data',cat:'dados',url:'https://github.com/statsbomb/open-data',desc:'Dados event-level abertos para projetos académicos. Ideal para TFC.',author:'',tags:'gratuito,open-source,académico'},
+];
+
+function scoreColor(v){
+  if(v>=8)return{bg:'rgba(31,204,116,.15)',txt:'#1fcc74'};
+  if(v>=6)return{bg:'rgba(31,204,116,.08)',txt:'#0f9955'};
+  if(v>=4)return{bg:'rgba(224,168,64,.15)', txt:'#e0a840'};
+  return      {bg:'rgba(224,82,82,.15)',    txt:'#e05252'};
+}
+function calcAvg(e){
+  if(!e.ratings)return null;
+  const v=rKeys.map(k=>Number(e.ratings[k]||0)).filter(x=>x>0);
+  return v.length?(Math.round(v.reduce((a,b)=>a+b,0)/v.length*10)/10):null;
+}
+
+// ── FIREBASE PERSIST ──────────────────────────────────
+async function persist(){
+  if(!CONFIGURED){renderAll();return;}
+  const obj={};entries.forEach(e=>obj[e.id]=e);
+  try{await set(entriesRef,obj);}catch(e){console.error('Firebase write error',e);}
+}
+async function persistLib(){
+  if(!CONFIGURED){renderAll();return;}
+  const obj={};resources.forEach(r=>obj[r.id]=r);
+  try{await set(resourcesRef,obj);}catch(e){console.error('Firebase write error',e);}
+}
+function load(){
+  if(!CONFIGURED){resources=PRESETS;renderAll();}
+}
+
+// ── RENDER ALL ────────────────────────────────────────
+function renderAll(){
+  updateStats();
+  renderList('hub'); renderList('reports'); renderList('videos');
+  renderCompare(); renderLibrary();
+}
+function updateStats(){
+  ['report','video'].forEach(t=>{
+    const el=document.getElementById('cnt-'+t);if(el)el.textContent=entries.filter(e=>e.type===t).length;
+  });
+  const libEl=document.getElementById('cnt-lib');if(libEl)libEl.textContent=resources.length;
+  const avgEl=document.getElementById('cnt-avg');
+  const avgs=entries.filter(e=>e.type==='report').map(calcAvg).filter(v=>v!==null);
+  avgEl.textContent=avgs.length?(Math.round(avgs.reduce((a,b)=>a+b,0)/avgs.length*10)/10):'—';
+  const tabCnt=document.getElementById('tab-cnt-report');
+  if(tabCnt)tabCnt.textContent=entries.filter(e=>e.type==='report').length;
+}
+function updateAuthorSelects(view){
+  const authors=[...new Set(entries.map(e=>e.author).filter(Boolean))];
+  const sel=document.getElementById('author-'+view);if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Todos os autores</option>';
+  authors.forEach(a=>{const o=document.createElement('option');o.value=a;o.textContent=a;sel.appendChild(o);});
+  if(authors.includes(cur))sel.value=cur;
+}
+function getFiltered(view){
+  const typeMap={hub:null,reports:'report',videos:'video'};
+  const type=typeMap[view];
+  const q=(document.getElementById('search-'+view)||{value:''}).value.toLowerCase();
+  const pf=(document.getElementById('pos-'+view)||{value:''}).value;
+  const af=(document.getElementById('author-'+view)||{value:''}).value;
+  return entries.filter(e=>{
+    if(type&&e.type!==type)return false;
+    if(pf&&e.position!==pf)return false;
+    if(af&&e.author!==af)return false;
+    if(q&&![(e.title||''),(e.player||''),(e.club||''),(e.desc||''),(e.tags||'')].join(' ').toLowerCase().includes(q))return false;
+    return true;
+  }).sort((a,b)=>b.ts-a.ts);
+}
+function renderList(view){
+  const el=document.getElementById('list-'+view);if(!el)return;
+  updateAuthorSelects(view);
+  const list=getFiltered(view);
+  if(!list.length){
+    el.innerHTML=`<div class="empty"><i class="ti ti-radar empty-icon"></i><h3>Sem entradas${view!=='hub'?' nesta categoria':''}</h3><p>Clica em <strong>Adicionar</strong> para começar.</p></div>`;
+    return;
+  }
+  el.innerHTML=list.map(renderCard).join('');
+}
+function renderCard(e){
+  const cfg=typeCfg[e.type]||typeCfg.note;
+  const date=e.obsDate?new Date(e.obsDate+'T12:00:00').toLocaleDateString('pt-PT',{day:'2-digit',month:'short'}):new Date(e.ts).toLocaleDateString('pt-PT',{day:'2-digit',month:'short'});
+  const avg=calcAvg(e);const sc=avg?scoreColor(avg):null;
+  const isOpen=openCardId===e.id;
+  let ratingsBars='';
+  if(e.type==='report'&&e.ratings){
+    const bars=rKeys.map(k=>{const v=Number(e.ratings[k]||0);return`<div class="rating-item"><div class="rating-name">${rLabels[k]}</div><div class="rating-bar-bg"><div class="rating-bar-fill" style="width:${v*10}%"></div></div><div class="rating-val">${v}</div></div>`;}).join('');
+    ratingsBars=`<div class="ratings-inline">${bars}</div>`;
+  }
+  let det='';
+  const fields=[];
+  if(e.player)fields.push(`<div class="detail-field"><i class="ti ti-user" style="font-size:13px;vertical-align:-1px;margin-right:5px;color:var(--green)"></i>Jogador: <strong>${e.player}</strong></div>`);
+  if(e.club)fields.push(`<div class="detail-field"><i class="ti ti-shield" style="font-size:13px;vertical-align:-1px;margin-right:5px;color:var(--green)"></i>Clube: <strong>${e.club}</strong></div>`);
+  if(e.league)fields.push(`<div class="detail-field"><i class="ti ti-trophy" style="font-size:13px;vertical-align:-1px;margin-right:5px;color:var(--green)"></i>Escalão: <strong>${e.league}</strong></div>`);
+  if(e.match)fields.push(`<div class="detail-field"><i class="ti ti-calendar" style="font-size:13px;vertical-align:-1px;margin-right:5px;color:var(--green)"></i>Jogo: <strong>${e.match}</strong></div>`);
+  if(fields.length)det+=`<div class="detail-grid">${fields.join('')}</div>`;
+  if(e.desc)det+=`<div class="detail-desc">${e.desc}</div>`;
+  if(e.url)det+=`<div style="margin-bottom:8px"><a class="link-preview" href="${e.url}" target="_blank"><i class="ti ti-external-link"></i>${e.url.replace(/^https?:\/\//,'').slice(0,55)}</a></div>`;
+  if(e.tags){const tags=e.tags.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`<span class="tag">${t}</span>`).join('');det+=`<div class="tags-row">${tags}</div>`;}
+  const mainLabel=e.type==='report'&&e.player?e.player:(e.title||'(sem título)');
+  const subtitle=e.type==='report'&&e.player&&e.title?` <span style="font-weight:300;color:var(--muted);font-size:13px">— ${e.title}</span>`:'';
+  return`<div class="entry-card" onclick="toggleCard('${e.id}')">
+    <div class="card-top">
+      <div class="entry-icon ${cfg.cls}"><i class="ti ${cfg.icon}"></i></div>
+      <div class="card-body">
+        <div class="card-title">${mainLabel}${subtitle}</div>
+        <div class="card-meta">
+          <span class="badge ${cfg.badgeCls}">${cfg.label}</span>
+          ${e.position?`<span class="pos-badge">${e.position}</span>`:''}
+          ${e.club?`<span>${e.club}</span>`:''}
+          ${e.author?`<span><span class="author-dot" style="background:${aColor(e.author)}"></span>${e.author}</span>`:''}
+          <span>${date}</span>
+          ${avg?`<span class="score-pill" style="background:${sc.bg};color:${sc.txt}">${avg}</span>`:''}
+        </div>
+      </div>
+      <div class="card-actions" onclick="event.stopPropagation()">
+        <button class="btn-icon" onclick="editEntry('${e.id}')" title="Editar"><i class="ti ti-edit"></i></button>
+        <button class="btn-icon danger" onclick="deleteEntry('${e.id}')" title="Eliminar"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>
+    ${ratingsBars}
+    <div class="card-detail${isOpen?' open':''}">
+      ${det||'<span style="font-size:13px;color:var(--muted)">Sem detalhes adicionais.</span>'}
+    </div>
+  </div>`;
+}
+function toggleCard(id){openCardId=(openCardId===id?null:id);renderAll();}
+
+// ── COMPARE ───────────────────────────────────────────
+function renderCompare(){
+  renderSlots();
+  const players=compareIds.filter(Boolean).map(id=>entries.find(e=>e.id===id)).filter(Boolean);
+  const out=document.getElementById('compare-output');
+  if(players.length<2){out.innerHTML=`<div class="empty"><i class="ti ti-columns empty-icon"></i><h3>Seleciona 2 ou 3 jogadores para comparar</h3><p>Clica nos slots acima para escolher relatórios.</p></div>`;return;}
+  out.innerHTML=renderRadar(players)+renderCompareTable(players);
+}
+function renderSlots(){
+  const el=document.getElementById('compare-slots');if(!el)return;
+  el.innerHTML=compareIds.map((id,i)=>{
+    const e=id?entries.find(x=>x.id===id):null;const col=PCOLS[i];
+    if(e){const avg=calcAvg(e);const sc=avg?scoreColor(avg):null;
+      return`<div class="pick-slot filled" style="border-left:3px solid ${col}">
+        <button class="pick-slot-remove" onclick="removeCompare(${i})"><i class="ti ti-x"></i></button>
+        <div style="margin-bottom:6px"><span class="pick-color" style="background:${col}"></span><span class="pick-slot-label" style="color:${col}">Jogador ${i+1}</span></div>
+        <div class="pick-slot-name">${e.player||e.title||'—'}</div>
+        <div class="pick-slot-sub">${[e.position,e.club].filter(Boolean).join(' · ')}</div>
+        ${avg?`<div style="margin-top:8px;display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:99px;background:${sc.bg};color:${sc.txt};font-size:12px;font-family:'JetBrains Mono',monospace;font-weight:600">${avg}</div>`:''}
+      </div>`;}
+    return`<div class="pick-slot" onclick="openPicker(${i})">
+      <i class="ti ti-plus" style="font-size:24px;color:var(--muted)"></i>
+      <span class="pick-slot-label">Jogador ${i+1}</span>
+    </div>`;
+  }).join('');
+}
+function renderRadar(players){
+  const cx=200,cy=175,r=120,n=rKeys.length,lo=20;
+  const angles=rKeys.map((_,i)=>((i/n)*2*Math.PI)-(Math.PI/2));
+  let grid='';
+  for(let g=2;g<=10;g+=2){
+    const pts=angles.map(a=>{const rr=(g/10)*r;return`${cx+rr*Math.cos(a)},${cy+rr*Math.sin(a)}`;}).join(' ');
+    grid+=`<polygon points="${pts}" fill="none" stroke="rgba(31,204,116,.1)" stroke-width="1"/>`;
+    if(g===10)grid+=`<text x="${cx+4}" y="${cy-r+4}" font-size="9" fill="#6b7d70" font-family="JetBrains Mono,monospace">${g}</text>`;
+  }
+  const axes=angles.map(a=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="rgba(31,204,116,.15)" stroke-width="1"/>`).join('');
+  const labels=rKeys.map((k,i)=>{const a=angles[i];const lx=cx+(r+lo)*Math.cos(a);const ly=cy+(r+lo)*Math.sin(a);const anchor=lx<cx-5?'end':lx>cx+5?'start':'middle';return`<text x="${lx}" y="${ly+4}" text-anchor="${anchor}" font-size="11" font-family="DM Sans,sans-serif" fill="#6b7d70">${rLabels[k]}</text>`;}).join('');
+  const polys=players.map((e,pi)=>{const col=PCOLS[pi];const pts=rKeys.map((k,i)=>{const v=Number((e.ratings||{})[k]||0)/10;const rr=v*r;return`${cx+rr*Math.cos(angles[i])},${cy+rr*Math.sin(angles[i])}`;}).join(' ');return`<polygon points="${pts}" fill="${col}" fill-opacity="0.1" stroke="${col}" stroke-width="2"/>`;}).join('');
+  const dots=players.map((e,pi)=>{const col=PCOLS[pi];return rKeys.map((k,i)=>{const v=Number((e.ratings||{})[k]||0)/10;const rr=v*r;return`<circle cx="${cx+rr*Math.cos(angles[i])}" cy="${cy+rr*Math.sin(angles[i])}" r="4" fill="${col}" stroke="#0b0f0d" stroke-width="1.5"/>`;}).join('');}).join('');
+  const legend=players.map((e,i)=>`<div class="legend-item"><span style="width:12px;height:12px;border-radius:50%;background:${PCOLS[i]};display:inline-block;box-shadow:0 0 8px ${PCOLS[i]}66"></span>${e.player||e.title||'Jogador '+(i+1)}</div>`).join('');
+  return`<div class="radar-wrap"><div class="radar-legend">${legend}</div><svg viewBox="0 0 400 350" style="width:100%;display:block" aria-label="Radar de comparação">${grid}${axes}${labels}${polys}${dots}</svg></div>`;
+}
+function renderCompareTable(players){
+  const headers=players.map((e,i)=>`<th style="color:${PCOLS[i]};text-shadow:0 0 12px ${PCOLS[i]}66">${e.player||e.title||'Jogador '+(i+1)}</th>`).join('');
+  const meta=[{label:'Posição',fn:e=>e.position||'—'},{label:'Clube',fn:e=>e.club||'—'},{label:'Escalão',fn:e=>e.league||'—'}]
+    .map(({label,fn})=>`<tr><td class="row-label">${label}</td>${players.map(e=>`<td>${fn(e)}</td>`).join('')}</tr>`).join('');
+  const rrows=rKeys.map(k=>{
+    const vals=players.map(e=>Number((e.ratings||{})[k]||0));const mx=Math.max(...vals);
+    return`<tr><td class="row-label">${rLabels[k]}</td>${vals.map((v,i)=>`<td><div class="bar-cell"><div class="bar-mini"><div class="bar-mini-fill" style="width:${v*10}%;background:${PCOLS[i]}"></div></div><span class="${v===mx&&v>0?'best':''}">${v}</span></div></td>`).join('')}</tr>`;
+  }).join('');
+  const avgs=players.map(calcAvg);
+  const avgRow=`<tr style="border-top:1px solid rgba(31,204,116,.2)"><td style="font-size:12px;font-weight:600;color:var(--text)">Média geral</td>${avgs.map((v,i)=>{const sc=v?scoreColor(v):null;return`<td>${v!==null?`<span style="padding:3px 10px;border-radius:99px;background:${sc.bg};color:${sc.txt};font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace">${v}</span>`:'—'}</td>`;}).join('')}</tr>`;
+  return`<div class="compare-table-wrap"><table class="compare-table"><thead><tr><th></th>${headers}</tr></thead><tbody>${meta}${rrows}${avgRow}</tbody></table></div>`;
+}
+function openPicker(slot){
+  pickerSlot=slot;
+  const taken=compareIds.filter(Boolean);
+  const avail=entries.filter(e=>e.type==='report'&&e.ratings&&!taken.includes(e.id));
+  const el=document.getElementById('picker-list');
+  el.innerHTML=avail.length?avail.map(e=>{const avg=calcAvg(e);const sc=avg?scoreColor(avg):null;return`<div class="picker-item" onclick="selectPlayer('${e.id}')"><div class="entry-icon icon-report" style="width:36px;height:36px;flex-shrink:0"><i class="ti ti-file-text"></i></div><div><div class="picker-name">${e.player||e.title||'—'}</div><div class="picker-sub">${[e.position,e.club,e.league].filter(Boolean).join(' · ')}</div></div>${avg?`<div style="margin-left:auto;padding:3px 10px;border-radius:99px;background:${sc.bg};color:${sc.txt};font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace">${avg}</div>`:''}</div>`;}).join(''):`<div style="text-align:center;padding:2rem;font-size:14px;color:var(--muted)">Sem relatórios com avaliação disponíveis.</div>`;
+  document.getElementById('picker-wrap').classList.add('open');
+}
+function selectPlayer(id){compareIds[pickerSlot]=id;closePicker();renderCompare();}
+function removeCompare(i){compareIds[i]=null;renderCompare();}
+function closePicker(){document.getElementById('picker-wrap').classList.remove('open');pickerSlot=null;}
+function handlePickerOvClick(e){if(e.target===document.getElementById('picker-wrap'))closePicker();}
+
+// ── LIBRARY ───────────────────────────────────────────
+function renderLibrary(){
+  const q=(document.getElementById('search-lib')||{value:''}).value.toLowerCase();
+  const catF=(document.getElementById('cat-lib')||{value:''}).value;
+  const el=document.getElementById('library-content');if(!el)return;
+  let list=resources.filter(r=>{
+    if(catF&&r.cat!==catF)return false;
+    if(q&&![(r.name||''),(r.desc||''),(r.tags||'')].join(' ').toLowerCase().includes(q))return false;
+    return true;
+  });
+  if(!list.length){el.innerHTML=`<div class="empty"><i class="ti ti-books empty-icon"></i><h3>Sem recursos encontrados</h3></div>`;return;}
+  const cats=catF?[catF]:[...new Set(list.map(r=>r.cat))];
+  el.innerHTML=cats.map(cat=>{
+    const catRes=list.filter(r=>r.cat===cat);if(!catRes.length)return'';
+    const cfg=catCfg[cat]||catCfg.outro;
+    const cards=catRes.map(r=>{
+      const tags=r.tags?r.tags.split(',').map(t=>t.trim()).filter(Boolean).map(t=>`<span class="tag">${t}</span>`).join(''):'';
+      const isPreset=r.id.startsWith('p');
+      return`<div class="lib-card" onclick="r_click('${r.id}')">
+        <div class="lib-card-head"><div class="lib-card-icon ${cfg.iconCls}"><i class="ti ${cfg.icon}"></i></div><div class="lib-card-name">${r.name}</div></div>
+        <div class="lib-card-desc">${r.desc||'—'}</div>
+        ${tags?`<div class="tags-row">${tags}</div>`:''}
+        <div class="lib-card-footer">
+          <span class="lib-card-cat ${cfg.badgeCls}">${cfg.label}</span>
+          <div class="lib-card-actions" onclick="event.stopPropagation()">
+            ${r.url?`<button class="btn-xs" onclick="openRes('${r.id}')" title="Abrir link"><i class="ti ti-external-link"></i></button>`:''}
+            <button class="btn-xs" onclick="editRes('${r.id}')" title="Editar"><i class="ti ti-edit"></i></button>
+            ${!isPreset?`<button class="btn-xs danger" onclick="deleteRes('${r.id}')" title="Eliminar"><i class="ti ti-trash"></i></button>`:''}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+    return`<div class="lib-section"><div class="lib-section-header"><div class="lib-section-title"><i class="ti ${cfg.icon}"></i>${cfg.label}</div><span class="lib-count">${catRes.length}</span></div><div class="lib-grid">${cards}</div></div>`;
+  }).join('');
+}
+function r_click(id){const r=resources.find(x=>x.id===id);if(r&&r.url)window.open(r.url,'_blank');}
+function openRes(id){const r=resources.find(x=>x.id===id);if(r&&r.url)window.open(r.url,'_blank');}
+function editRes(id){
+  editingLibId=id;const r=resources.find(x=>x.id===id)||{};
+  document.getElementById('lib-modal-title').textContent='Editar recurso';
+  document.getElementById('lf-name').value=r.name||'';document.getElementById('lf-cat').value=r.cat||'plataforma';
+  document.getElementById('lf-url').value=r.url||'';document.getElementById('lf-desc').value=r.desc||'';
+  document.getElementById('lf-author').value=r.author||'';document.getElementById('lf-tags').value=r.tags||'';
+  document.getElementById('lib-modal-wrap').classList.add('open');
+}
+function openLibModal(){
+  editingLibId=null;document.getElementById('lib-modal-title').textContent='Novo recurso';
+  ['lf-name','lf-url','lf-desc','lf-author','lf-tags'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('lf-cat').value='plataforma';
+  document.getElementById('lib-modal-wrap').classList.add('open');
+  setTimeout(()=>document.getElementById('lf-name').focus(),50);
+}
+function closeLibModal(){document.getElementById('lib-modal-wrap').classList.remove('open');editingLibId=null;}
+function handleLibOvClick(e){if(e.target===document.getElementById('lib-modal-wrap'))closeLibModal();}
+async function saveResource(){
+  const name=document.getElementById('lf-name').value.trim();if(!name){document.getElementById('lf-name').focus();return;}
+  const data={name,cat:document.getElementById('lf-cat').value,url:document.getElementById('lf-url').value.trim(),desc:document.getElementById('lf-desc').value.trim(),author:document.getElementById('lf-author').value.trim(),tags:document.getElementById('lf-tags').value.trim()};
+  if(editingLibId){const i=resources.findIndex(r=>r.id===editingLibId);if(i>=0)resources[i]={...resources[i],...data};}
+  else resources.push({id:'r'+Date.now().toString(36),ts:Date.now(),...data});
+  await persistLib();closeLibModal();renderLibrary();updateStats();
+}
+async function deleteRes(id){resources=resources.filter(r=>r.id!==id);await persistLib();renderLibrary();updateStats();}
+
+// ── VIEW & ADD ────────────────────────────────────────
+function handleAdd(){if(currentView==='library')openLibModal();else openModal();}
+function switchView(view,btn){
+  currentView=view;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.getElementById('add-label').textContent=view==='library'?'Adicionar recurso':'Adicionar';
+  if(view==='compare')renderCompare();
+  if(view==='library')renderLibrary();
+}
+
+// ── ENTRY MODAL ───────────────────────────────────────
+function onTypeChange(){
+  const isR=document.getElementById('f-type').value==='report';
+  document.querySelectorAll('.report-only').forEach(el=>el.style.display=isR?'':'none');
+}
+function openModal(id){
+  editingId=id||null;
+  document.getElementById('modal-title').textContent=id?'EDITAR ENTRADA':'NOVA ENTRADA';
+  if(id){const e=entries.find(x=>x.id===id);document.getElementById('f-type').value=e.type||'report';['title','player','club','league','match','url','desc','author','tags'].forEach(f=>document.getElementById('f-'+f).value=e[f]||'');document.getElementById('f-pos').value=e.position||'';document.getElementById('f-date').value=e.obsDate||'';if(e.ratings)rKeys.forEach(k=>{document.getElementById('r-'+k).value=e.ratings[k]||5;document.getElementById('rv-'+k).textContent=e.ratings[k]||5;});}
+  else{['title','player','club','league','match','url','desc','tags'].forEach(f=>document.getElementById('f-'+f).value='');document.getElementById('f-pos').value='';document.getElementById('f-date').value='';document.getElementById('f-type').value='report';const last=entries.length?entries[entries.length-1].author||'':'';document.getElementById('f-author').value=last;rKeys.forEach(k=>{document.getElementById('r-'+k).value=5;document.getElementById('rv-'+k).textContent=5;});}
+  onTypeChange();
+  document.getElementById('modal-wrap').classList.add('open');
+  setTimeout(()=>(document.getElementById('f-player')||document.getElementById('f-title')).focus(),50);
+}
+function closeModal(){document.getElementById('modal-wrap').classList.remove('open');editingId=null;}
+function handleOvClick(e){if(e.target===document.getElementById('modal-wrap'))closeModal();}
+async function saveEntry(){
+  const type=document.getElementById('f-type').value;
+  const player=document.getElementById('f-player').value.trim();
+  const title=document.getElementById('f-title').value.trim();
+  if(type==='report'&&!player&&!title){document.getElementById('f-player').focus();return;}
+  if(type!=='report'&&!title){document.getElementById('f-title').focus();return;}
+  const ratings={};rKeys.forEach(k=>{ratings[k]=Number(document.getElementById('r-'+k).value);});
+  const data={type,title,player,position:document.getElementById('f-pos').value,club:document.getElementById('f-club').value.trim(),league:document.getElementById('f-league').value.trim(),obsDate:document.getElementById('f-date').value,match:document.getElementById('f-match').value.trim(),url:document.getElementById('f-url').value.trim(),desc:document.getElementById('f-desc').value.trim(),author:document.getElementById('f-author').value.trim(),tags:document.getElementById('f-tags').value.trim(),ratings:type==='report'?ratings:null};
+  if(editingId){const i=entries.findIndex(e=>e.id===editingId);if(i>=0)entries[i]={...entries[i],...data};}
+  else entries.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),ts:Date.now(),...data});
+  await persist();closeModal();renderAll();
+}
+async function deleteEntry(id){entries=entries.filter(e=>e.id!==id);compareIds=compareIds.map(i=>i===id?null:i);await persist();renderAll();}
+function editEntry(id){openModal(id);}
+
+// ── SEARCH LISTENERS ──────────────────────────────────
+['hub','reports','videos','lib'].forEach(v=>{
+  const el=document.getElementById('search-'+v);
+  if(el)el.addEventListener('input',()=>v==='lib'?renderLibrary():renderList(v));
+});
+
+load();
+</script>
+</body>
+</html>
